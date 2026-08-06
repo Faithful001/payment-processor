@@ -117,8 +117,9 @@ This project does not stand alone. It is one half of a small distributed system:
 
 Set your connection details in `src/main/resources/application.properties` (or via `.env`, loaded manually at startup):
 
+Properties: `src/main/resources/application.properties`
 ```properties
-spring.datasource.url=jdbc:postgresql://localhost:5432/payment_processor
+spring.datasource.url=jdbc:postgresql://localhost:5432/payment_processor_db
 spring.datasource.username=your_username
 spring.datasource.password=your_password
 spring.jpa.hibernate.ddl-auto=update
@@ -129,6 +130,21 @@ spring.rabbitmq.username=your_rabbitmq_user
 spring.rabbitmq.password=your_rabbitmq_password
 
 ledger.engine.base-url=http://localhost:8081
+ledger.engine.api-key=your-api-key
+```
+
+ENV: `.env` 
+```env
+POSTGRES_DB_URL=jdbc:postgresql://localhost:5433/payment_processor_db
+POSTGRES_DB=payment_processor_db
+POSTGRES_USER=your_username
+POSTGRES_PASSWORD=your_password
+
+RABBITMQ_USER=your_rabbitmq_user
+RABBITMQ_PASSWORD=your_rabbitmq_password
+
+LEDGER_ENGINE_BASE_URL=http://localhost:8081
+LEDGER_ENGINE_API_KEY=your-api-key
 ```
 
 ### Run the app

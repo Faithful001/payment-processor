@@ -17,7 +17,7 @@ public class OutboxPublisher {
     private final OutboxEventRepository outboxEventRepository;
     private final RabbitTemplate rabbitTemplate;
 
-    // Polls every 2 seconds for unpublished events and sends them to RabbitMQ.
+    // polls every 2 seconds for unpublished events and sends them to RabbitMQ
     @Scheduled(fixedDelay = 2000)
     public void publishPendingEvents() {
         List<OutboxEvent> pending = outboxEventRepository.findByStatus(OutboxStatus.PENDING);
