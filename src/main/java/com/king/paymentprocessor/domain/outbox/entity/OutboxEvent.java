@@ -25,7 +25,7 @@ public class OutboxEvent {
 
     @Lob
     @Column(nullable = false)
-    private String payload; // JSON string
+    private String payload;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
