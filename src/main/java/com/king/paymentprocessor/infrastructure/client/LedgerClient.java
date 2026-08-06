@@ -13,11 +13,14 @@ import java.util.List;
 public class LedgerClient {
 
     private final RestClient restClient;
+    private final String apiKey;
 
-    public LedgerClient(@Value("${ledger.engine.base-url}") String baseUrl) {
-        this.restClient = RestClient.builder()
-                .baseUrl(baseUrl)
-                .build();
+    public LedgerClient(
+            @Value("${ledger.engine.base-url}") String baseUrl,
+            @Value("${ledger.engine.api-key}") String apiKey
+    ) {
+        this.restClient = RestClient.builder().baseUrl(baseUrl).build();
+        this.apiKey = apiKey;
     }
 
     public void postTransaction(PaymentCapturedEvent event) {
@@ -32,7 +35,7 @@ public class LedgerClient {
         restClient.post()
                 .uri("/transactions")
                 .header("Idempotency-Key", "payment-" + event.paymentId())
-                .header("X-User-Id", "system") // placeholder, matches ledger engine's current auth stub
+                .header("X-Api-Key", apiKey)
                 .body(request)
                 .retrieve()
                 .toBodilessEntity();
