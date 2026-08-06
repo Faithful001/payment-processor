@@ -41,7 +41,6 @@ public class PaymentService {
 
         paymentRepository.save(payment);
 
-        // Simulate authorization happening immediately for simplicity.
         return authorize(payment.getId());
     }
 
