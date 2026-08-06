@@ -1,8 +1,10 @@
 package com.king.paymentprocessor.domain.payment;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.king.paymentprocessor.domain.outbox.OutboxEventRepository;
 import com.king.paymentprocessor.domain.outbox.entity.OutboxEvent;
 import com.king.paymentprocessor.domain.payment.dto.CreatePaymentDto;
+import com.king.paymentprocessor.domain.payment.dto.PaymentCapturedEvent;
 import com.king.paymentprocessor.domain.payment.entity.Payment;
 import com.king.paymentprocessor.domain.payment.entity.PaymentAttempt;
 import com.king.paymentprocessor.domain.payment.enums.PaymentStatus;
@@ -19,6 +21,7 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final PaymentAttemptRepository paymentAttemptRepository;
     private final OutboxEventRepository outboxEventRepository;
+    private final ObjectMapper objectMapper;
 
     @Transactional
     public Payment create(CreatePaymentDto payload, String idempotencyKey) {
@@ -111,12 +114,19 @@ public class PaymentService {
         paymentAttemptRepository.save(attempt);
     }
 
+
     private String buildCapturedEventPayload(Payment payment) {
-        // Simple manual JSON for now; swap for a proper ObjectMapper-based serializer as this grows.
-        return String.format(
-                "{\"paymentId\":\"%s\",\"amount\":%s,\"currency\":\"%s\",\"sourceAccountId\":\"%s\",\"destinationAccountId\":\"%s\"}",
-                payment.getId(), payment.getAmount(), payment.getCurrency(),
-                payment.getSourceAccountId(), payment.getDestinationAccountId()
-        );
+        try {
+            var event = new PaymentCapturedEvent(
+                    payment.getId(),
+                    payment.getAmount(),
+                    payment.getCurrency(),
+                    payment.getSourceAccountId(),
+                    payment.getDestinationAccountId()
+            );
+            return objectMapper.writeValueAsString(event);
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to serialize PaymentCaptured event", e);
+        }
     }
 }
